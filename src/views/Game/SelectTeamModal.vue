@@ -1,8 +1,12 @@
 <template lang="pug">
-.select-team(:class="{show}")
+.select-team(:class="{show, hasExpanded: !!selectedTeam}")
 	.overlay
 	.modal
-		.team(v-for="team in teams", @click="()=> $emit('teamSelected', team)",
+		.team(v-for="team in teams",
+			@click="()=> $emit('teamSelected', team)",
+			@touchstart="teamsTouchDown[team.id] = true",
+			@touchend="teamsTouchDown[team.id] = false",
+			:class="{active: teamsTouchDown[team.id]===true, expanded: selectedTeam && team.id===selectedTeam.id}"
 			:style="{background: team.color}")
 			.image(:style="{backgroundImage: 'url('+team.image+')'}")
 			//- .title(:style="{color: team.colorText}") {{team.name}}
@@ -14,8 +18,14 @@ export default {
 	props: {
 		show: {type: Boolean, required: true},
 		teams: {type: Array, required: true},
+		team: {type: Object, required: false},
 	},
-	data: ()=> ({}),
+	data: ()=> ({
+		teamsTouchDown: {},
+	}),
+	computed: {
+		selectedTeam () { return this.team },
+	},
 }
 </script>
 <style scoped lang="stylus">
@@ -60,7 +70,7 @@ fullsize()
 		align-items center
 		display flex
 		
-		transition opacity 0.3s
+		transition opacity 0.15s
 		opacity 0
 		
 	.modal
@@ -77,13 +87,19 @@ fullsize()
 		display flex
 		align-items stretch
 		flex-direction column
+		
 		.team
 			position relative
 			display flex
-			flex-grow: 1
+			flex-grow 1
 			font-size 3em
 			justify-content: center
 			align-items center
+			overflow hidden
+			
+			transition flex-grow 0.2s
+			&.expanded
+				flex-grow
 			&:hover
 				cursor pointer
 			.image
@@ -95,8 +111,11 @@ fullsize()
 				background-position center center
 				background-size contain
 				background-repeat no-repeat
+				transition transform 0.15s
+			&:active, .active
+				.image
+					transform scale(0.94)
 
-			
 	
 	pointer-events none
 	&.show
@@ -106,5 +125,13 @@ fullsize()
 		.modal
 			opacity 1
 			transform translateY(0px)
+			
+	&.hasExpanded
+		.title
+			opacity 0
+		.team:not(.expanded)
+			flex-grow 0.0001
+		.modal
+			pointer-events none
 
 </style>

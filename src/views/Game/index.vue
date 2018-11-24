@@ -1,6 +1,6 @@
 <template lang="pug">
 .root
-	SelectTeamModal(:show="team===null || true", :teams="teams", @teamSelected="team=> this.team = team")
+	SelectTeamModal(:show="team===null || true", :teams="teams", @teamSelected="team=> this.team = team", :team="team")
 
 </template>
 <script>
