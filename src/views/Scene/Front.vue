@@ -1,49 +1,140 @@
 <template lang="pug">
-.root
-	svg.svg(width="200" height="200"): g
+.root(@mousedown="addSegment(angle+=$event.shiftKey?10:-10)")
+	svg.svg(width="1024" height="1024"): g
 		path(v-for="edge in edges", :key="edge.id",
 			:d="edge.d",
 			stroke="#777" fill="transparent")
-		path(v-for="edge in edges", :key="edge.id+'-end'",
-			:d="edge.dEnd",
-			stroke="transparent" fill="#777")
+
+	h1 hello {{angle}}
 </template>
 <script>
 
+// document.addEventListener('keydown', event=> {
+// 	if (event.keyCode == 37) {
+// 		this.angle += 10
+
+// 	} else if (event.keyCode == 39) {
+// 		this.angle -= 10
+// 	}
+// })
+
 export default {
+
+
+
+	data: ()=> ({
+		time: 0,
+		angle: 0,
+		points: [],
+	}),
+
 	computed: {
 		edges () {
-			const getEdge = ({from, to})=> {
-				const arrowX = 7
-				const arrowY = 4
-				const arrowYMargin = 2
 
-				const d = 10
-				const configNodeHeight = 50
-				const fromP = [from.x+from.width, from.y+configNodeHeight/2]
-				const toP = [to.x-arrowX-arrowYMargin, to.y+configNodeHeight/2]
-				const xDist = toP[0]-fromP[0]
-				const handleDist = Math.max(d, Math.abs(xDist)*(0.5 * (200/Math.max(200, xDist)))
-									+ Math.abs(toP[1]-fromP[1])/3)
 
-				return {
-					from, to, id: from.id+'-'+to.id,
-					d: `M${fromP[0]} ${fromP[1]}`
-						+`C ${fromP[0]+handleDist} ${fromP[1]}, `
-						+`${toP[0]-handleDist} ${toP[1]}, `
-						+`${toP[0]} ${toP[1]}`,
-					dEnd: `M${toP[0]} ${toP[1]}`
-						+`L${toP[0]} ${toP[1]-arrowY}`
-						+`L${toP[0]+arrowX} ${toP[1]}`
-						+`L${toP[0]} ${toP[1]+arrowY}`
-						+'z',
-				}
-			}
-
-			return [getEdge({from: {x: 0, width: 30, y: 0, id: 1}, to: {x: 100, y: 100, id: 2}})]
+			return [{d: getD(this.points, bezierCommand), id: 1}]
 		},
 	},
+
+	mounted () {
+		setInterval(()=> {
+			this.time += 1
+		}, 16)
+	},
+
+	methods: {addSegment (rightLeft) {
+
+		const c = window.innerWidth / 2
+		const inH = window.innerHeight
+		 const last = inH-this.time
+
+		if (last < inH / 2) {
+			this.points.pop()
+		}
+
+		this.points.push([c +this.angle, last])
+		
+
+	}},
 }
+
+
+const smoothing = 0.2
+
+
+
+// Properties of a line
+// I:  - pointA (array) [x,y]: coordinates
+//     - pointB (array) [x,y]: coordinates
+// O:  - (object) { length: l, angle: a }: properties of the line
+const line = (pointA, pointB)=> {
+	const lengthX = pointB[0] - pointA[0]
+	const lengthY = pointB[1] - pointA[1]
+	return {
+		length: Math.sqrt(Math.pow(lengthX, 2) + Math.pow(lengthY, 2)),
+		angle: Math.atan2(lengthY, lengthX),
+	}
+}
+
+// Position of a control point
+// I:  - current (array) [x, y]: current point coordinates
+//     - previous (array) [x, y]: previous point coordinates
+//     - next (array) [x, y]: next point coordinates
+//     - reverse (boolean, optional): sets the direction
+// O:  - (array) [x,y]: a tuple of coordinates
+const controlPoint = (current, previous, next, reverse)=> {
+
+	// When 'current' is the first or last point of the array
+	// 'previous' or 'next' don't exist.
+	// Replace with 'current'
+	const p = previous || current
+	const n = next || current
+
+	// Properties of the opposed-line
+	const o = line(p, n)
+
+	// If is end-control-point, add PI to the angle to go backward
+	const angle = o.angle + (reverse ? Math.PI : 0)
+	const length = o.length * smoothing
+
+	// The control point position is relative to the current point
+	const x = current[0] + Math.cos(angle) * length
+	const y = current[1] + Math.sin(angle) * length
+	return [x, y]
+}
+
+// Create the bezier curve command
+// I:  - point (array) [x,y]: current point coordinates
+//     - i (integer): index of 'point' in the array 'a'
+//     - a (array): complete array of points coordinates
+// O:  - (string) 'C x2,y2 x1,y1 x,y': SVG cubic bezier C command
+const bezierCommand = (point, i, a)=> {
+
+	// start control point
+	const cps = controlPoint(a[i - 1], a[i - 2], point)
+
+	// end control point
+	const cpe = controlPoint(point, a[i - 1], a[i + 1], true)
+	return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point[0]},${point[1]}`
+}
+
+// Render the svg <path> element
+// I:  - points (array): points coordinates
+//     - command (function)
+//       I:  - point (array) [x,y]: current point coordinates
+//           - i (integer): index of 'point' in the array 'a'
+//           - a (array): complete array of points coordinates
+//       O:  - (string) a svg path command
+// O:  - (string): a Svg <path> element
+const getD = (points, command)=> {
+	// build the d attributes by looping over the points
+	const d = points.reduce((acc, point, i, a)=> i === 0
+    ? `M ${point[0]},${point[1]}`
+    : `${acc} ${command(point, i, a)}`
+	, '')
+	return d
+}
+
 </script>
 <style scoped lang="stylus">
 
