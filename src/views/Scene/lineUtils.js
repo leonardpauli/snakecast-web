@@ -47,7 +47,7 @@ const controlPoint = (current, previous, next, reverse)=> {
 //     - i (integer): index of 'point' in the array 'a'
 //     - a (array): complete array of points coordinates
 // O:  - (string) 'C x2,y2 x1,y1 x,y': SVG cubic bezier C command
-const bezierCommand = (point, i, a)=> {
+export const bezierCommand = (point, i, a)=> {
 
 	// start control point
 	const cps = controlPoint(a[i - 1], a[i - 2], point)
