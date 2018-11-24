@@ -113,10 +113,10 @@ fullsize()
 				cursor pointer
 			.image
 				position absolute
-				width 70%
-				height 70%
-				left 15%
-				top 15%
+				width 80%
+				height 40%
+				left ((100% - 80%) / 2)
+				top ((100% - 40%) / 2)
 				background-position center center
 				background-size contain
 				background-repeat no-repeat
