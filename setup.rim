@@ -13,13 +13,14 @@ get started:
 	- npm run lint:watch // autofixes lint issues on save (~200ms deley...)
 
 frontend
-- git
-- spa{vue}
-kl. 15:03
-- vue setup
+// - git
+// - spa{vue}
+// kl. 15:03
+//  - vue setup
 	// - lp-lint
 	// - lint-watch
-	- pug
+	// - pug
+// kl. 15:49
 - routes skeleton
 	- user
 		- select
