@@ -1,11 +1,13 @@
 <template lang="pug">
 .select-team(:class="{show}")
 	.overlay
-	.title Select Your Team
 	.modal
 		.team(v-for="team in teams", onclick="teamSelected(team)",
 			:style="{background: team.color}")
-			.title(:style="{color: team.colorText}") {{team.name}}
+			.image(:style="{backgroundImage: 'url('+team.image+')'}")
+
+			//- .title(:style="{color: team.colorText}") {{team.name}}
+	.title: .inner CHOOSE TEAM
 </template>
 <script>
 
@@ -17,13 +19,13 @@ export default {
 		teams: [{
 			id: 1,
 			name: 'The Snakes',
-			color: '#4488FF',
-			colorText: '#000000',
+			color: 'HSLA(345, 49%, 53%, 1.00)',
+			image: '/image/snakes.png',
 		}, {
 			id: 2,
 			name: 'The Hacks',
-			color: '#FF32aa',
-			colorText: '#000000',
+			color: 'HSLA(218, 34%, 17%, 1.00)',
+			image: '/image/hacks.png',
 		}],
 		teamSelected: team=> { /**/ },
 	}),
@@ -55,24 +57,29 @@ fullsize()
 		transition opacity 0.3s
 		opacity 0
 	
-	$title_height = 40px + $padding
+	$title_height = 0
+	
 	& > .title
+		position abosolute
 		font-family "HelveticaNeue-CondensedBold", "HelveticaNeue-Medium", "HelveticaNeue"
-		position relative
-		height ($title_height - $padding)
-		padding-left $padding
-		box-sizing border-box
+		font-size 3em
+		height 100%
+		pointer-events none
 		color $white
-		margin-top $padding
-				
+		transform translateY(0px)
+		
+		align-items stretch
+		flex-direction column
+		justify-content: center
+		align-items center
+		display flex
+		
 	.modal
 		position absolute
-		left $padding
-		width "calc(100% - %s)" % ($padding * 2)
-		height "calc(100% - %s)" % ($title_height + $padding)
-		// background $red
-		border-radius 3px
-		overflow: hidden
+		left 0px
+		top 0px
+		width 100%
+		height 100%
 		
 		transition opacity 0.1s, transform 0.4s
 		opacity 0
@@ -82,11 +89,21 @@ fullsize()
 		align-items stretch
 		flex-direction column
 		.team
+			position relative
 			display flex
 			flex-grow: 1
 			font-size 3em
 			justify-content: center
 			align-items center
+			.image
+				position absolute
+				width 70%
+				height 70%
+				left 15%
+				top 15%
+				background-position center center
+				background-size contain
+				background-repeat no-repeat
 
 			
 	
