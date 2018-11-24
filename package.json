@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "lint:watch": "onchange '{{src}/**,.}/*.{vue,js}' -d 200 -w -- npm run --silent lint {{changed}}",
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
@@ -13,6 +14,7 @@
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
+    "@leonardpauli/eslint-config": "^0.1.3",
     "@vue/cli-plugin-babel": "^3.0.5",
     "@vue/cli-plugin-eslint": "^3.0.5",
     "@vue/cli-plugin-unit-jest": "^3.0.5",
@@ -25,6 +27,7 @@
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0-0",
     "lint-staged": "^7.2.2",
+    "onchange": "^3.3.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-template-compiler": "^2.5.17"
