@@ -31,9 +31,9 @@ export default new Router({
 		},
 		{ path: '/settings', name: 'settings', component: Settings },
 		{ path: '/scene', name: 'scene', component: Scene, children: [
-			{ path: '/ceiling', name: 'scene-ceiling', component: SceneCeiling },
-			{ path: '/front', name: 'scene-front', component: SceneFront },
-			{ path: '/bars', name: 'scene-bars', component: SceneBars },
+			{ path: 'ceiling', name: 'scene-ceiling', component: SceneCeiling },
+			{ path: 'front', name: 'scene-front', component: SceneFront },
+			{ path: 'bars', name: 'scene-bars', component: SceneBars },
 		] },
 		{ path: '/game', name: 'game', component: Game },
 		{ path: '/input-experiment', name: 'inputexperiment', component: InputExperiment },
