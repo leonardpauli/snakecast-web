@@ -13,7 +13,6 @@ export default {
 </script>
 <style scoped lang="stylus">
 
-
 $blue = #1d283c
 $red = #c24766
 $white = #ffffff
