@@ -3,6 +3,7 @@
 	RouterView
 </template>
 <style lang="stylus">
+
 body, html
 	background black
 	color gray
