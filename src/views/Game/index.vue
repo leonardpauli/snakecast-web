@@ -20,9 +20,9 @@ fullsize()
 	top 0px
 	left 0px
 	width 100%
-	height 100%
+	height calc(100% - 70px)
 
 .root
 	fullsize()
-	
+
 </style>

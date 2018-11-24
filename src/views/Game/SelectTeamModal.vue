@@ -57,9 +57,11 @@ fullsize()
 	
 	$title_height = 40px + $padding
 	& > .title
+		font-family "HelveticaNeue-CondensedBold", "HelveticaNeue-Medium", "HelveticaNeue"
 		position relative
 		height ($title_height - $padding)
-		left $padding
+		padding-left $padding
+		box-sizing border-box
 		color $white
 		margin-top $padding
 				
@@ -68,7 +70,7 @@ fullsize()
 		left $padding
 		width "calc(100% - %s)" % ($padding * 2)
 		height "calc(100% - %s)" % ($title_height + $padding)
-		background $red
+		// background $red
 		border-radius 3px
 		overflow: hidden
 		
