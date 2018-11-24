@@ -2,10 +2,9 @@
 .select-team(:class="{show}")
 	.overlay
 	.modal
-		.team(v-for="team in teams", onclick="teamSelected(team)",
+		.team(v-for="team in teams", onclick="()=> $emit('teamSelected', team)",
 			:style="{background: team.color}")
 			.image(:style="{backgroundImage: 'url('+team.image+')'}")
-
 			//- .title(:style="{color: team.colorText}") {{team.name}}
 	.title: .inner CHOOSE TEAM
 </template>
@@ -14,21 +13,9 @@
 export default {
 	props: {
 		show: {type: Boolean, required: true},
+		teams: {type: Array, required: true},
 	},
-	data: ()=> ({
-		teams: [{
-			id: 1,
-			name: 'The Snakes',
-			color: 'HSLA(345, 49%, 53%, 1.00)',
-			image: '/image/snakes.png',
-		}, {
-			id: 2,
-			name: 'The Hacks',
-			color: 'HSLA(218, 34%, 17%, 1.00)',
-			image: '/image/hacks.png',
-		}],
-		teamSelected: team=> { /**/ },
-	}),
+	data: ()=> ({}),
 }
 </script>
 <style scoped lang="stylus">
@@ -52,7 +39,6 @@ fullsize()
 	.overlay
 		fullsize()
 		background hsla(0,0%,0%,0.2)
-		opacity 100%
 
 		transition opacity 0.3s
 		opacity 0
@@ -73,6 +59,9 @@ fullsize()
 		justify-content: center
 		align-items center
 		display flex
+		
+		transition opacity 0.3s
+		opacity 0
 		
 	.modal
 		position absolute
@@ -110,7 +99,7 @@ fullsize()
 	pointer-events none
 	&.show
 		pointer-events all
-		.overlay
+		.overlay, .title
 			opacity 1
 		.modal
 			opacity 1
