@@ -25,13 +25,13 @@ export default {
 			this.connection= new WebSocket('ws://b30e4191.ngrok.io:9030')
 		}
 		const tilt = v=> {
-			this.value = v
+			this.value = twoDecimals(v)
 			console.log('unicorn value'+this.value)
 			const c=document.getElementById('myCanvas')
 			const ctx=c.getContext('2d')
 			const myGradient=ctx.createLinearGradient(0, 0, 400, 0)
-			const paddLeft = Math.max(this.value -0.2, 0)
-			const paddRight = Math.min(this.value +0.2, 1)
+			const paddLeft = Math.max(this.value -0.2, 0.0)
+			const paddRight = Math.min(this.value +0.2, 1.0)
 			myGradient.addColorStop(0, 'black')
 			myGradient.addColorStop(paddLeft, 'black')
 			myGradient.addColorStop(this.value, 'red')
@@ -53,6 +53,8 @@ const guid = ()=> 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c=> {
 	return v.toString(16)
 })
 
+const twoDecimals = v=> Math.round(v *1000)/1000
+
 const movementListener = tilt=> {
 	if (window.DeviceOrientationEvent) {
 		window.addEventListener('deviceorientation', event=> {
@@ -68,7 +70,7 @@ const movementListener = tilt=> {
 		}, true)
 	}
 	window.addEventListener('mousemove', event=> {
-		tilt(Math.round(event.y)/800)
+		tilt(Math.round(event.y)/850)
 	}, true)
 }
 </script>
