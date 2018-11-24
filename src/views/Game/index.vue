@@ -1,6 +1,5 @@
 <template lang="pug">
 .root
-	SelectTeamModal(:show="false", :teams="teams", @teamSelected="()=> alert('hello')")
 	svg.svg(width="200" height="200"): g
 		path(v-for="edge in edges", :key="edge.id",
 			:d="edge.d",
@@ -8,6 +7,7 @@
 		path(v-for="edge in edges", :key="edge.id+'-end'",
 			:d="edge.dEnd",
 			stroke="transparent" fill="#777")
+	SelectTeamModal(:show="team===null", :teams="teams", @teamSelected="team=> this.team = team")
 
 </template>
 <script>
@@ -16,6 +16,7 @@ import SelectTeamModal from './SelectTeamModal'
 export default {
 	components: {SelectTeamModal},
 	data: ()=> ({
+		team: null,
 		teams: [{
 			id: 1,
 			name: 'The Snakes',

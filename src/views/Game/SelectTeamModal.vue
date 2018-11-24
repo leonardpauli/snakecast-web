@@ -2,7 +2,7 @@
 .select-team(:class="{show}")
 	.overlay
 	.modal
-		.team(v-for="team in teams", onclick="()=> $emit('teamSelected', team)",
+		.team(v-for="team in teams", @click="()=> $emit('teamSelected', team)",
 			:style="{background: team.color}")
 			.image(:style="{backgroundImage: 'url('+team.image+')'}")
 			//- .title(:style="{color: team.colorText}") {{team.name}}
@@ -84,6 +84,8 @@ fullsize()
 			font-size 3em
 			justify-content: center
 			align-items center
+			&:hover
+				cursor pointer
 			.image
 				position absolute
 				width 70%
