@@ -1,5 +1,5 @@
 <template lang="pug">
-.select-team(:class="{show, hasExpanded: !!selectedTeam}")
+.select-team(:class="{show, hasExpanded: !!selectedTeam}", @mousemove="mouseMove")
 	.overlay
 	.modal
 		.team(v-for="team in teams",
@@ -8,7 +8,7 @@
 			@touchend="teamsTouchDown[team.id] = false",
 			:class="{active: teamsTouchDown[team.id]===true, expanded: selectedTeam && team.id===selectedTeam.id}"
 			:style="{background: team.color}")
-			.image(:style="{backgroundImage: 'url('+team.image+')'}")
+			.image(:style="{backgroundImage: 'url('+team.image+')', transform: 'rotateZ('+angleForTeam(team)*40+'deg)'}")
 			//- .title(:style="{color: team.colorText}") {{team.name}}
 	.title: .inner CHOOSE TEAM
 </template>
@@ -22,9 +22,18 @@ export default {
 	},
 	data: ()=> ({
 		teamsTouchDown: {},
+		angle: 0,
 	}),
 	computed: {
 		selectedTeam () { return this.team },
+		angleForTeam () { return team=> this.selectedTeam && team.id===this.selectedTeam.id? this.angle: team.angle },
+	},
+	methods: {
+		mouseMove (e) {
+			const norm = e.clientX/window.document.body.offsetWidth
+			const normCentered = norm*2-1
+			this.angle = normCentered
+		},
 	},
 }
 </script>
@@ -112,9 +121,10 @@ fullsize()
 				background-size contain
 				background-repeat no-repeat
 				transition transform 0.15s
+				transform-origin 50% 100%
 			&:active, .active
 				.image
-					transform scale(0.94)
+					transform scale(0.94) !important
 
 	
 	pointer-events none
