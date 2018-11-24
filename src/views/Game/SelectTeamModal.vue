@@ -1,5 +1,5 @@
 <template lang="pug">
-.select-team(:class="{show, hasExpanded: !!selectedTeam}", @mousemove="mouseMove")
+.select-team(:class="{show, hasExpanded: !!selectedTeam}")
 	.overlay
 	.modal
 		.team(v-for="team in teams",
@@ -13,6 +13,7 @@
 	.title: .inner CHOOSE TEAM
 </template>
 <script>
+import config from '@/config'
 
 export default {
 	props: {
@@ -23,18 +24,29 @@ export default {
 	data: ()=> ({
 		teamsTouchDown: {},
 		angle: 0,
+		rawacc: {x: null, y: null, z: null},
+		mouse: {x: null, y: null},
 	}),
 	computed: {
 		selectedTeam () { return this.team },
 		angleForTeam () { return team=> this.selectedTeam && team.id===this.selectedTeam.id? this.angle: team.angle },
 	},
-	methods: {
-		mouseMove (e) {
-			const norm = e.clientX/window.document.body.offsetWidth
-			const normCentered = norm*2-1
-			this.angle = normCentered
-		},
-	},
+	mounted () {
+		config.device.rawacc = this.rawacc
+		config.device.mouse = this.mouse
+
+		this.$watch('rawacc', newVal=> {
+			if (!this.team) return
+			this.angle = newVal.x
+			config.api.sendUserData({angle: this.angle, teamId: this.team.teamId})
+		}, { deep: true })
+
+		this.$watch('mouse', newVal=> {
+			if (!this.team) return
+			this.angle = newVal.x
+			config.api.sendUserData({angle: this.angle, teamId: this.team.teamId})
+		}, { deep: true })
+ 	},
 }
 </script>
 <style scoped lang="stylus">
