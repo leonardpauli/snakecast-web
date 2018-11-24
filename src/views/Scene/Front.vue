@@ -1,5 +1,5 @@
 <template lang="pug">
-.root(@mousemove="mouseMove")
+.root(@mousemove="mouseMove", @click="reset")
 	svg.svg(width="1024" height="1024"): g
 		path(v-for="edge in edges", :key="edge.id",
 			:d="edge.d",
@@ -34,11 +34,7 @@ export default {
 		},
 	},
 	mounted () {
-		this.points.push({
-			x: 0.5, // window.document.body.clientWidth/2,
-			y: 1, // window.document.body.clientHeight,
-			timestamp: new Date()*1,
-		})
+		this.reset()
 
 		const setit = ()=> this.timeoutId = setTimeout(()=> {
 			this.addSegment()
@@ -50,6 +46,14 @@ export default {
 		clearTimeout(this.timeoutId)
 	},
 	methods: {
+		reset () {
+			this.points.splice(0, this.points.length)
+			this.points.push({
+				x: 0.5, // window.document.body.clientWidth/2,
+				y: 1, // window.document.body.clientHeight,
+				timestamp: new Date()*1,
+			})
+		},
 		mouseMove (e) {
 			const norm = e.clientX/window.document.body.offsetWidth
 			const normCentered = norm*2-1
