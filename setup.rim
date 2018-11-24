@@ -17,9 +17,9 @@ frontend
 - spa{vue}
 kl. 15:03
 - vue setup
+	// - lp-lint
+	// - lint-watch
 	- pug
-	- lp-lint
-	- lint-watch
 - routes skeleton
 	- user
 		- select

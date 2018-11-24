@@ -1,5 +1,8 @@
-<template>
-  <h1>Unicorns! <br>{{ y }}g</h1>
+<template lang="pug">
+h1
+	| Unicorns!
+	br
+	| {{ y }}g
 </template>
 
 <script>
