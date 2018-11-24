@@ -1,0 +1,35 @@
+# todo
+
+frontend
+- git
+- spa{vue}
+kl. 15:03
+- vue setup
+	- pug
+	- lp-lint
+	- lint-watch
+- routes skeleton
+	- user
+		- select
+		- play
+		- game over
+	- screen
+		- ceilings
+		- front
+		- pins
+	- home
+		- create{modal}/settings{modal}
+- data store // pure json object
+	- game
+		- user is User
+		- settings is Setting
+			- rnd nrs // to make game deterministic across all clients with master client only needing to be online at setup
+		- users is many User
+		- scene is Scene
+			- stars is Star
+				pos{normalized}: based on settings.rnd
+			- teams is many Team
+				points: Number
+				segments....
+
+// https://livehacksteam.slack.com/
