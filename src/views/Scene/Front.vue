@@ -1,9 +1,10 @@
 <template lang="pug">
-.root(@mousedown="addSegment(angle+=$event.shiftKey?10:-10)")
+.root(@mousemove="mouseMove")
 	svg.svg(width="1024" height="1024"): g
 		path(v-for="edge in edges", :key="edge.id",
 			:d="edge.d",
-			stroke="#777" fill="transparent")
+			:stroke="edge.color" stroke-width="15px"
+			fill="transparent")
 
 	.score(v-for="(team, index) in teams", :key="team.id", v-if="team.score",
 		:class="{right: index%2!=0}") {{team.score}}
@@ -23,25 +24,46 @@ export default {
 	}),
 	computed: {
 		edges () {
-			return [{d: getD(this.points, bezierCommand), id: 1}]
+			const getA = (points, invert)=> points.map((p, i)=>
+				`${!i?'M':'L'} ${((p.x-0.5)*(invert?-1:1)+0.5)*window.document.body.clientWidth} `
+				+`${p.y*window.document.body.clientHeight}`).join(' ')||'M0 0'
+			return [
+				{d: getA(this.points), id: 1, color: '#f00'},
+				{d: getA(this.points, true), id: 2, color: 'blue'},
+			]
 		},
 	},
 	mounted () {
-		setInterval(()=> {
-			this.time += 1
-		}, 16)
+		this.points.push({
+			x: 0.5, // window.document.body.clientWidth/2,
+			y: 1, // window.document.body.clientHeight,
+			timestamp: new Date()*1,
+		})
+
+		const setit = ()=> this.timeoutId = setTimeout(()=> {
+			this.addSegment()
+			setit()
+		}, 40)
+		setit()
+	},
+	destroyed () {
+		clearTimeout(this.timeoutId)
 	},
 	methods: {
-		addSegment (rightLeft) {
-			const c = window.innerWidth / 2
-			const inH = window.innerHeight
-			 const last = inH-this.time
-
-			if (last < inH / 2) {
-				this.points.pop()
-			}
-
-			this.points.push([c +this.angle, last])
+		mouseMove (e) {
+			const norm = e.clientX/window.document.body.offsetWidth
+			const normCentered = norm*2-1
+			this.angle = normCentered
+		},
+		addSegment () {
+			const last = this.points[this.points.length-1]
+			this.points.push({
+				x: last.x + this.angle*0.007,
+				y: last.y - 0.001,
+				timestamp: new Date()*1,
+			})
+			if (this.points.length>100) this.points.shift()
+			// console.log(this.points)
 		},
 	},
 }
