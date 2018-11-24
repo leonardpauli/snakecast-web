@@ -1,4 +1,16 @@
 # todo
+' created 24 nov 2018, at reactorhallen, KTH
+	(stagecast livehacks hackathon event)
+
+chatt: "https://livehacksteam.slack.com/
+prerequisites:
+	- npm & node
+	// read about vue, js, etc
+
+get started:
+	- npm i
+	- npm run serve
+	- npm run lint:watch // autofixes lint issues on save (~200ms deley...)
 
 frontend
 - git
@@ -31,5 +43,3 @@ kl. 15:03
 			- teams is many Team
 				points: Number
 				segments....
-
-// https://livehacksteam.slack.com/
