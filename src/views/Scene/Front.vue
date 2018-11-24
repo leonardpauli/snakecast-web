@@ -5,13 +5,18 @@
 			:d="edge.d",
 			stroke="#777" fill="transparent")
 
-	h1 hello {{angle}}
+	.score(v-for="(team, index) in teams", :key="team.id", v-if="team.score",
+		:class="{right: index%2!=0}") {{team.score}}
+
+	.logo
 </template>
 <script>
+import config from '@/config'
 import {getD, bezierCommand} from './lineUtils'
 
 export default {
 	data: ()=> ({
+		teams: config.teams,
 		time: 0,
 		angle: 0,
 		points: [],
@@ -43,6 +48,9 @@ export default {
 </script>
 <style scoped lang="stylus">
 
+$blue = #1d283c
+$red = #c24766
+$white = #ffffff
 
 fullsize()
 	position absolute
@@ -54,7 +62,38 @@ fullsize()
 .root
 	fullsize()
 	
+	// background $blue
+
 	&>.svg
 		fullsize()
+	
+	$score_padding = 50px
+	.score
+		position absolute
+		font-family "HelveticaNeue-CondensedBold", "HelveticaNeue-Medium", "HelveticaNeue"
+		font-size 7em
+		pointer-events none
+		color $white
+		opacity 0.3
+		width 200px
+		height 100px
+		top 20px
+		left $score_padding
+		&.right
+			left auto
+			right $score_padding
+			text-align right
+
+	.logo
+		position absolute
+		bottom 10px
+		right 20px
+		background-image url('/image/logo.png')
+		background-repeat no-repeat
+		background-size contain
+		background-position right center
+		width 260px
+		height 120px
+		opacity 0.5
 
 </style>
