@@ -16,8 +16,7 @@ const config = {
 				get websocket () {
 					if (this._websocket) return this._websocket
 					this._websocket = new WebSocket(
-						`ws://stagecast.se/api/events/${config.eventName}/ws?x-user-listener=1`)
-					console.log(this._websocket)
+						`wss://stagecast.se/api/events/${config.eventName}/ws?x-user-listener=1`)
 					this._websocket.onopen = ()=> this.isOpen = true
 					return this._websocket
 				},
@@ -26,14 +25,41 @@ const config = {
 					if (!this.websocket || !this.isOpen) return console.log('ws not open yet')
 					this.websocket.send(JSON.stringify(data))
 				},
+				listenToData (handleMessage) {
+					this.websocket.onmessage = data=> {
+						try {
+							data = JSON.parse(data.data)
+							handleMessage(data)
+						} catch (e) {
+							console.error(e)
+						}
+					}
+				},
 			},
 		},
 		sendUserData ({teamId, angle}) {
 			const data = { teamId, angle, userId: this.data.userId }
 			this.backend.sendUserData(data)
 		},
+		listendToData (listener) {
+			this.backend.listenToData(listener)
+		},
+		listenToFormattedData () {
+			this.listendToData(d=> {
+				this.data.users[d.userId] = d
+				const team = config.teams.find(t=> t.id == d.teamId)
+				console.log(team)
+				if (!team) return
+				const usersForTeam = Object.values(this.data.users).filter(u=> u.teamId == team.id)
+				const sum = xs=> xs.reduce((p, x)=> p+x, 0)
+				const avg = xs=> sum(xs)/(xs.length||1)
+				team.angle = avg(usersForTeam.map(u=> u.angle))
+				// console.log(team.angle, usersForTeam)
+			})
+		},
 		data: {
 			userId: uuidv4(),
+			users: {},
 		},
 	},
 	device: {
@@ -47,6 +73,7 @@ const config = {
 		image: '/image/snakes.png',
 		angle: 0,
 		score: 0,
+		points: [],
 	}, {
 		id: 2,
 		name: 'The Hacks',
@@ -54,6 +81,7 @@ const config = {
 		image: '/image/hacks.png',
 		angle: -0.3,
 		score: 3,
+		points: [],
 	}],
 }
 
@@ -61,16 +89,19 @@ const attachAccel = ()=> {
 	let lx, ly, lz
 	if (!window.DeviceOrientationEvent) return
 	window.addEventListener('deviceorientation', event=> {
-		const z = Math.round(event.alpha)
-		const x = Math.round(event.gamma)
-		const y = Math.round(event.beta)
+		const z = event.alpha/40
+		const x = event.gamma/40
+		const y = event.beta/40
 		const changed = z != lz || y != ly || x != lx
 		if (!changed) return
 		lx = x
 		ly = y
 		lz = z
-		if (config.device.rawacc)
-			Object.assign(config.device.rawacc, {x, y, z})
+		if (config.device.rawacc) {
+			config.device.rawacc.x = x
+			config.device.rawacc.y = y
+			config.device.rawacc.z = z
+		}
 	}, true)
 }
 const attachMouse = ()=> {

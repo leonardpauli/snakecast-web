@@ -1,5 +1,5 @@
 <template lang="pug">
-.root(@mousemove="mouseMove", @click="reset")
+.root(@click="reset")
 	svg.svg(width="1024" height="1024"): g
 		path(v-for="edge in edges", :key="edge.id",
 			:d="edge.d",
@@ -18,19 +18,15 @@ import {getD, bezierCommand} from './lineUtils'
 export default {
 	data: ()=> ({
 		teams: config.teams,
-		time: 0,
-		angle: 0,
-		points: [],
 	}),
 	computed: {
 		edges () {
 			const getA = (points, invert)=> points.map((p, i)=>
 				`${!i?'M':'L'} ${((p.x-0.5)*(invert?-1:1)+0.5)*window.document.body.clientWidth} `
 				+`${p.y*window.document.body.clientHeight}`).join(' ')||'M0 0'
-			return [
-				{d: getA(this.points), id: 1, color: '#f00'},
-				{d: getA(this.points, true), id: 2, color: 'blue'},
-			]
+			return this.teams.map(t=> ({
+				d: getA(t.points), id: t.id, color: t.color,
+			}))
 		},
 	},
 	mounted () {
@@ -41,33 +37,37 @@ export default {
 			setit()
 		}, 40)
 		setit()
+
+		config.api.listenToFormattedData()
 	},
 	destroyed () {
 		clearTimeout(this.timeoutId)
 	},
 	methods: {
 		reset () {
-			this.points.splice(0, this.points.length)
-			this.points.push({
-				x: 0.5, // window.document.body.clientWidth/2,
-				y: 1, // window.document.body.clientHeight,
-				timestamp: new Date()*1,
-			})
-		},
-		mouseMove (e) {
-			const norm = e.clientX/window.document.body.offsetWidth
-			const normCentered = norm*2-1
-			this.angle = normCentered
+			const forTeam = team=> {
+				team.points.splice(0, team.points.length)
+				team.points.push({
+					x: 0.5, // window.document.body.clientWidth/2,
+					y: 1, // window.document.body.clientHeight,
+					timestamp: new Date()*1,
+				})
+			}
+
+			this.teams.map(t=> forTeam(t))
 		},
 		addSegment () {
-			const last = this.points[this.points.length-1]
-			this.points.push({
-				x: last.x + this.angle*0.007,
-				y: last.y - 0.001,
-				timestamp: new Date()*1,
-			})
-			if (this.points.length>100) this.points.shift()
-			// console.log(this.points)
+			const forTeam = team=> {
+				const last = team.points[team.points.length-1]
+				team.points.push({
+					x: last.x + team.angle*0.007,
+					y: last.y - 0.001,
+					timestamp: new Date()*1,
+				})
+				if (team.points.length>100) team.points.shift()
+			}
+
+			this.teams.map(t=> forTeam(t))
 		},
 	},
 }

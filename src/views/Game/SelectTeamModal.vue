@@ -38,13 +38,13 @@ export default {
 		this.$watch('rawacc', newVal=> {
 			if (!this.team) return
 			this.angle = newVal.x
-			config.api.sendUserData({angle: this.angle, teamId: this.team.teamId})
+			config.api.sendUserData({angle: this.angle, teamId: this.team.id})
 		}, { deep: true })
 
 		this.$watch('mouse', newVal=> {
 			if (!this.team) return
 			this.angle = newVal.x
-			config.api.sendUserData({angle: this.angle, teamId: this.team.teamId})
+			config.api.sendUserData({angle: this.angle, teamId: this.team.id})
 		}, { deep: true })
  	},
 }
